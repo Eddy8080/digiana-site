@@ -11,3 +11,11 @@ services:
       - ./robots.txt:/usr/share/nginx/html/robots.txt:ro
       - ./sitemap.xml:/usr/share/nginx/html/sitemap.xml:ro
       - ./llms.txt:/usr/share/nginx/html/llms.txt:ro
+    networks:
+      - default
+      - digiana_digiana_network
+
+networks:
+  default:
+  digiana_digiana_network:
+    external: true
