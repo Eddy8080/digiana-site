@@ -1,0 +1,10 @@
+services:
+  site-digiana:
+    build: .
+    container_name: site_digiana_local
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./politica-de-privacidade.html:/usr/share/nginx/html/politica-de-privacidade.html:ro
