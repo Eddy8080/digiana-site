@@ -1,0 +1,30 @@
+# Digiana — Ecossistema de Inteligência Empresarial
+
+> A Digiana integra contabilidade consultiva, finanças corporativas, controladoria estratégica, ciência de dados e tecnologia de ponta para potencializar a gestão e as decisões empresariais.
+
+## Informações Principais
+- **Nome Oficial:** Digiana
+- **Slogan:** Ecossistema de Inteligência Empresarial
+- **Website:** https://digiana.com.br
+- **Localização:** Edifício Roosevelt, Comércio, Salvador - BA, Brasil (Coordenadas: -12.9724334, -38.5137938)
+- **Telefone / WhatsApp:** (71) 3321-1993 (+55 71 3321-1993)
+- **E-mail:** contato@digiana.com.br
+- **Intranet:** https://app.colabin.com.br
+
+## Competências e Serviços Principais
+1. **Contabilidade e Fiscal Consultivos:** Escrituração contábil, demonstrações financeiras, relatórios gerenciais, conformidade tributária e preparação para a Reforma Tributária (IBS/CBS).
+2. **Controladoria Estratégica:** Planejamento orçamentário, projeções econômicas, fluxo de caixa, gestão de custos, apuração de margens e rentabilidade, governança corporativa e compliance.
+3. **BPO Financeiro:** Terceirização qualificada de rotinas financeiras (contas a pagar, contas a receber, conciliação bancária diária e relatórios de fluxo).
+4. **Ciência de Dados, BI & Tecnologia:** Dashboards de Business Intelligence em tempo real, integração de dados de múltiplos sistemas legados e desenvolvimento de soluções sob medida.
+5. **Inteligência Artificial para Negócios:** Agentes de IA dedicados para validação contábil, análise de consistência de dados fiscais e apoio à decisão estratégica.
+6. **Especialização Setorial em Saúde:** Soluções contábeis e financeiras dedicadas para clínicas, hospitais, operadoras de saúde, laboratórios e profissionais médicos (controle de repasses, conciliação de convênios, adequação regulatória ANS).
+
+## Segmentos Atendidos
+- Empresas em expansão e crescimento acelerado
+- Prestadores de serviços especializados e profissionais liberais (organização PF/PJ)
+- Grupos empresariais, holdings e redes de filiais
+- Organizações e prestadores da área de Saúde
+
+## Páginas
+- [Página Inicial](https://digiana.com.br/): Apresentação institucional, serviços, ecossistema e formulário de contato.
+- [Política de Privacidade](https://digiana.com.br/politica-de-privacidade.html): Diretrizes de proteção de dados pessoais em conformidade com a LGPD (Lei nº 13.709/2018).
