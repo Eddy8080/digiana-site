@@ -1,4 +1,5 @@
-.DS_Store
-Thumbs.db
+.env
+node_modules/
+api/node_modules/
 *.log
-.system_generated/
+.DS_Store

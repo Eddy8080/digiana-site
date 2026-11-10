@@ -1,0 +1,15 @@
+{
+  "name": "digiana-api-contato",
+  "version": "1.0.0",
+  "description": "API de envio de contato para o site oficial Digiana",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "nodemailer": "^6.9.16"
+  }
+}

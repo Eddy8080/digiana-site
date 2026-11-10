@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Digiana | Ecossistema de Inteligência Empresarial</title>
+<link rel="icon" type="image/png" href="DigiAna - Icone.png" />
+<link rel="shortcut icon" type="image/png" href="DigiAna - Icone.png" />
+<link rel="apple-touch-icon" href="DigiAna - Icone.png" />
 <meta name="description" content="A Digiana integra contabilidade consultiva, finanças corporativas, controladoria estratégica, dados e tecnologia para transformar informações em inteligência e apoiar decisões empresariais em Salvador e em todo o Brasil." />
 <link rel="canonical" href="https://digiana.com.br/" />
 
@@ -519,6 +522,19 @@ textarea{min-height:92px;resize:vertical}
 .ok{font-size:.9rem;color:var(--teal);min-height:1.2rem}
 @media(max-width:900px){.cpanel{grid-template-columns:minmax(0,1fr)}.f2{grid-template-columns:minmax(0,1fr)}}
 
+/* Seletor CNPJ e Dinâmica de Contato */
+.cnpj-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.65rem 1rem;border-radius:var(--r2);background:rgba(244,244,244,.05);border:1px solid rgba(244,244,244,.14)}
+.cnpj-row span.title{font:500 11px var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--on-panel-soft)}
+.cnpj-choices{display:flex;gap:1.2rem;align-items:center}
+.cnpj-choice{display:inline-flex;align-items:center;gap:.4rem;cursor:pointer;font:500 .88rem var(--font);color:var(--frost);letter-spacing:0;text-transform:none}
+.cnpj-choice input[type="radio"]{width:auto;margin:0;accent-color:var(--teal);cursor:pointer}
+.cnpj-feedback{font-size:.82rem;margin-top:.1rem;min-height:1.2rem;display:block;transition:color .2s ease}
+.cnpj-feedback.loading{color:var(--teal)}
+.cnpj-feedback.success{color:#00BA96}
+.cnpj-feedback.error{color:#ff8787}
+.field-fade-in{animation:fadeInField .32s ease forwards}
+@keyframes fadeInField{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
 /* rodapé */
 footer.ft{background:var(--panel);color:var(--frost);padding:4.5rem 0 2.5rem;border-top:4px solid var(--teal)}
 .fgrid{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr));gap:2.5rem}
@@ -804,8 +820,27 @@ footer.ft{background:var(--panel);color:var(--frost);padding:4.5rem 0 2.5rem;bor
 </div>
 <form id="form" novalidate="">
 <div class="f2">
-<label for="nome">Nome<input autocomplete="name" id="nome" placeholder="Seu nome"/></label>
-<label for="empresa">Empresa<input autocomplete="organization" id="empresa" placeholder="Razão social ou nome fantasia"/></label>
+  <label for="nome">Nome<input autocomplete="name" id="nome" placeholder="Seu nome"/></label>
+  <div id="slot-topo-dir">
+    <label for="empresa" id="wrap-empresa"><span id="lbl-empresa-title">Empresa</span><input autocomplete="organization" id="empresa" placeholder="Razão social ou nome fantasia"/></label>
+    <label for="cnpj" id="wrap-cnpj" style="display:none;">CNPJ da empresa<input id="cnpj" maxlength="18" placeholder="00.000.000/0000-00" autocomplete="off" inputmode="numeric"/></label>
+  </div>
+</div>
+
+<div class="cnpj-row">
+  <span class="title">A empresa possui CNPJ?</span>
+  <div class="cnpj-choices">
+    <label class="cnpj-choice"><input type="radio" name="tem_cnpj" value="sim" id="cnpj_sim"> Sim</label>
+    <label class="cnpj-choice"><input type="radio" name="tem_cnpj" value="nao" id="cnpj_nao" checked> Não</label>
+  </div>
+</div>
+
+<div id="box-dynamic" style="display:none;"></div>
+<span id="cnpj-feedback" class="cnpj-feedback"></span>
+
+<div class="f2">
+<label for="email">E-mail corporativo ou direto<input autocomplete="email" id="email" placeholder="seu.email@empresa.com.br" type="email"/></label>
+<label for="telefone">Telefone / WhatsApp<input autocomplete="tel" id="telefone" placeholder="(71) 99999-9999" type="tel"/></label>
 </div>
 <div class="f2">
 <label for="segmento">Segmento
@@ -926,13 +961,176 @@ document.addEventListener('click',function(e){
   var a=e.target.closest('a[data-interest]');if(a)pick(a.dataset.interest);
 });
 
-document.getElementById('form').addEventListener('submit',function(e){
+// Dinâmica de CNPJ e Troca Inteligente de Campos
+var cnpjSim = document.getElementById('cnpj_sim');
+var cnpjNao = document.getElementById('cnpj_nao');
+var slotTopoDir = document.getElementById('slot-topo-dir');
+var boxDynamic = document.getElementById('box-dynamic');
+var wrapEmpresa = document.getElementById('wrap-empresa');
+var wrapCnpj = document.getElementById('wrap-cnpj');
+var lblEmpresaTitle = document.getElementById('lbl-empresa-title');
+var inputCnpj = document.getElementById('cnpj');
+var cnpjFeedback = document.getElementById('cnpj-feedback');
+var inputEmpresa = document.getElementById('empresa');
+var inputEmail = document.getElementById('email');
+var inputTelefone = document.getElementById('telefone');
+
+function updateFormLayout(){
+  if(cnpjSim && cnpjSim.checked){
+    wrapCnpj.style.display = 'grid';
+    slotTopoDir.appendChild(wrapCnpj);
+    wrapCnpj.classList.remove('field-fade-in');
+    void wrapCnpj.offsetWidth;
+    wrapCnpj.classList.add('field-fade-in');
+
+    boxDynamic.style.display = 'grid';
+    boxDynamic.appendChild(wrapEmpresa);
+    if(lblEmpresaTitle) lblEmpresaTitle.textContent = 'Empresa (Razão Social ou Nome Fantasia)';
+    wrapEmpresa.classList.remove('field-fade-in');
+    void wrapEmpresa.offsetWidth;
+    wrapEmpresa.classList.add('field-fade-in');
+
+    if(inputCnpj) inputCnpj.focus();
+  } else {
+    if(slotTopoDir && wrapEmpresa){
+      slotTopoDir.appendChild(wrapEmpresa);
+      if(lblEmpresaTitle) lblEmpresaTitle.textContent = 'Empresa';
+      wrapEmpresa.classList.remove('field-fade-in');
+      void wrapEmpresa.offsetWidth;
+      wrapEmpresa.classList.add('field-fade-in');
+    }
+
+    if(wrapCnpj) wrapCnpj.style.display = 'none';
+    if(boxDynamic) boxDynamic.style.display = 'none';
+    if(cnpjFeedback){
+      cnpjFeedback.textContent = '';
+      cnpjFeedback.className = 'cnpj-feedback';
+    }
+  }
+}
+
+if(cnpjSim) cnpjSim.addEventListener('change', updateFormLayout);
+if(cnpjNao) cnpjNao.addEventListener('change', updateFormLayout);
+
+function maskCnpj(v){
+  v = v.replace(/\D/g, '').slice(0, 14);
+  if(v.length > 12) return v.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})$/, '$1.$2.$3/$4-$5');
+  if(v.length > 8) return v.replace(/^(\d{2})(\d{3})(\d{3})(\d{1,4})$/, '$1.$2.$3/$4');
+  if(v.length > 5) return v.replace(/^(\d{2})(\d{3})(\d{1,3})$/, '$1.$2.$3');
+  if(v.length > 2) return v.replace(/^(\d{2})(\d{1,3})$/, '$1.$2');
+  return v;
+}
+
+function maskPhone(v){
+  v = v.replace(/\D/g, '').slice(0, 11);
+  if(v.length > 10) return v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+  if(v.length > 6) return v.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
+  if(v.length > 2) return v.replace(/^(\d{2})(\d{0,5})$/, '($1) $2');
+  return v;
+}
+
+if(inputTelefone){
+  inputTelefone.addEventListener('input', function(){
+    this.value = maskPhone(this.value);
+  });
+}
+
+var cnpjTimer = null;
+if(inputCnpj){
+  inputCnpj.addEventListener('input', function(){
+    this.value = maskCnpj(this.value);
+    var clean = this.value.replace(/\D/g, '');
+    clearTimeout(cnpjTimer);
+
+    if(clean.length === 14){
+      cnpjFeedback.textContent = 'Buscando dados cadastrais da empresa na Receita Federal...';
+      cnpjFeedback.className = 'cnpj-feedback loading';
+
+      cnpjTimer = setTimeout(async function(){
+        try {
+          var res = await fetch('/api/cnpj/' + clean);
+          var data = await res.json();
+          if(res.ok){
+            if(data.empresa) inputEmpresa.value = data.empresa;
+            if(data.email) inputEmail.value = data.email;
+            if(data.telefone) inputTelefone.value = maskPhone(data.telefone);
+
+            cnpjFeedback.textContent = '✓ Dados encontrados! Você pode ajustar os campos abaixo se desejar.';
+            cnpjFeedback.className = 'cnpj-feedback success';
+          } else {
+            cnpjFeedback.textContent = data.error || 'CNPJ não encontrado na Receita. Preencha os dados manualmente.';
+            cnpjFeedback.className = 'cnpj-feedback error';
+          }
+        } catch(err) {
+          cnpjFeedback.textContent = 'Não foi possível consultar automaticamente no momento. Preencha manualmente.';
+          cnpjFeedback.className = 'cnpj-feedback error';
+        }
+      }, 300);
+    } else {
+      cnpjFeedback.textContent = '';
+      cnpjFeedback.className = 'cnpj-feedback';
+    }
+  });
+}
+
+document.getElementById('form').addEventListener('submit',async function(e){
   e.preventDefault();
   var ok=document.getElementById('ok');
-  var n=document.getElementById('nome').value.trim(),em=document.getElementById('empresa').value.trim();
-  if(!n||!em){ok.textContent='Informe seu nome e a empresa.';return}
-  if(!document.getElementById('lgpd').checked){ok.textContent='Aceite o tratamento de dados para continuar.';return}
-  ok.textContent='Formulário demonstrativo. Antes da publicação, é necessário conectar este envio ao WhatsApp oficial ou a um CRM.';
+  var btn=this.querySelector('button[type="submit"]');
+  var n=document.getElementById('nome').value.trim();
+  var em=document.getElementById('empresa').value.trim();
+  var temCnpj = cnpjSim && cnpjSim.checked;
+  var cVal = inputCnpj ? inputCnpj.value.trim() : '';
+  var mail = inputEmail ? inputEmail.value.trim() : '';
+  var tel = inputTelefone ? inputTelefone.value.trim() : '';
+  var seg=document.getElementById('segmento').value;
+  var int=document.getElementById('interesse').value;
+  var msg=document.getElementById('msg').value.trim();
+  var lgpd=document.getElementById('lgpd').checked;
+
+  if(!n||!em){ok.style.color='#ff6b6b';ok.textContent='Informe seu nome e a empresa.';return}
+  if(temCnpj && cVal.replace(/\D/g, '').length !== 14){ok.style.color='#ff6b6b';ok.textContent='Informe um CNPJ válido com 14 dígitos.';return}
+  if(!mail||!mail.includes('@')){ok.style.color='#ff6b6b';ok.textContent='Informe um e-mail válido para retorno.';return}
+  if(!tel||tel.replace(/\D/g, '').length < 10){ok.style.color='#ff6b6b';ok.textContent='Informe um telefone ou WhatsApp com DDD para retorno.';return}
+  if(!lgpd){ok.style.color='#ff6b6b';ok.textContent='Aceite o tratamento de dados para continuar.';return}
+
+  ok.style.color='var(--teal)';
+  ok.textContent='Enviando sua solicitação...';
+  if(btn)btn.disabled=true;
+
+  try{
+    var res=await fetch('/api/contato',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        nome:n,
+        empresa:em,
+        tem_cnpj:temCnpj,
+        cnpj:temCnpj ? cVal : '',
+        email:mail,
+        telefone:tel,
+        segmento:seg,
+        interesse:int,
+        msg:msg,
+        lgpd:lgpd
+      })
+    });
+    var data=await res.json();
+    if(res.ok){
+      ok.style.color='var(--teal)';
+      ok.textContent='✓ Solicitação enviada com sucesso! Nossa equipe entrará em contato.';
+      document.getElementById('form').reset();
+      updateFormLayout();
+    }else{
+      ok.style.color='#ff6b6b';
+      ok.textContent=data.error||'Erro ao enviar mensagem. Tente novamente.';
+    }
+  }catch(err){
+    ok.style.color='#ff6b6b';
+    ok.textContent='Não foi possível enviar agora. Fale conosco pelo WhatsApp ou tente mais tarde.';
+  }finally{
+    if(btn)btn.disabled=false;
+  }
 });
 </script>
 <script id="sandra-scroll-script">
