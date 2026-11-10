@@ -8,7 +8,7 @@ COPY politica-de-privacidade.html /usr/share/nginx/html/
 COPY robots.txt /usr/share/nginx/html/
 COPY sitemap.xml /usr/share/nginx/html/
 COPY llms.txt /usr/share/nginx/html/
-COPY "DigiAna - Icone.png" /usr/share/nginx/html/
+COPY ["DigiAna - Icone.png", "/usr/share/nginx/html/"]
 COPY favicon.png /usr/share/nginx/html/
 COPY favicon.ico /usr/share/nginx/html/
 
