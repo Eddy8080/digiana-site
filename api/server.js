@@ -98,9 +98,11 @@ app.get('/api/cnpj/:cnpj', handleCnpj);
 // Endpoint de envio de contato
 const handleContato = async (req, res) => {
   try {
-    const { nome, empresa, tem_cnpj, cnpj, email, telefone, segmento, interesse, msg, lgpd } = req.body;
+    const { nome, empresa, tem_cnpj, cnpj, email, telefone, segmento, interesse, msg, lgpd, tipo_solicitacao } = req.body;
 
-    if (!nome || !empresa) {
+    const nomeEmpresa = empresa || (tipo_solicitacao === 'Abertura de empresa' ? 'Abertura de empresa' : '');
+
+    if (!nome || !nomeEmpresa) {
       return res.status(400).json({ error: 'Nome e empresa são obrigatórios.' });
     }
 
@@ -142,9 +144,14 @@ const handleContato = async (req, res) => {
               <td style="padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-weight: bold; width: 150px; color: #555;">Nome:</td>
               <td style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">${escapeHtml(nome)}</td>
             </tr>
+            ${tipo_solicitacao ? `
+            <tr>
+              <td style="padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-weight: bold; color: #555;">Situação:</td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #f0f0f0; color: #00BA96; font-weight: bold;">${escapeHtml(tipo_solicitacao)}</td>
+            </tr>` : ''}
             <tr>
               <td style="padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-weight: bold; color: #555;">Empresa:</td>
-              <td style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">${escapeHtml(empresa)}</td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">${escapeHtml(nomeEmpresa)}</td>
             </tr>
             ${cnpj ? `
             <tr>
@@ -183,11 +190,12 @@ ${escapeHtml(msg || 'Nenhuma mensagem adicional informada.')}
       </div>
     `;
 
+    const prefixoTipo = tipo_solicitacao ? `[${tipo_solicitacao}] ` : '';
     const mailOptions = {
       from: remetente,
       to: destinatario,
       replyTo: (email && email.includes('@')) ? email : destinatario,
-      subject: `[Contato Site] ${interesse ? interesse + ' - ' : ''}${empresa} (${nome})`,
+      subject: `[Contato Site] ${prefixoTipo}${interesse ? interesse + ' - ' : ''}${nomeEmpresa} (${nome})`,
       html: htmlBody
     };
 

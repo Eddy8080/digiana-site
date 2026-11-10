@@ -523,17 +523,31 @@ textarea{min-height:92px;resize:vertical}
 @media(max-width:900px){.cpanel{grid-template-columns:minmax(0,1fr)}.f2{grid-template-columns:minmax(0,1fr)}}
 
 /* Seletor CNPJ e Dinâmica de Contato */
-.cnpj-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.65rem 1rem;border-radius:var(--r2);background:rgba(244,244,244,.05);border:1px solid rgba(244,244,244,.14)}
-.cnpj-row span.title{font:500 11px var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--on-panel-soft)}
-.cnpj-choices{display:flex;gap:1.2rem;align-items:center}
-.cnpj-choice{display:inline-flex;align-items:center;gap:.4rem;cursor:pointer;font:500 .88rem var(--font);color:var(--frost);letter-spacing:0;text-transform:none}
-.cnpj-choice input[type="radio"]{width:auto;margin:0;accent-color:var(--teal);cursor:pointer}
 .cnpj-feedback{font-size:.82rem;margin-top:.1rem;min-height:1.2rem;display:block;transition:color .2s ease}
 .cnpj-feedback.loading{color:var(--teal)}
 .cnpj-feedback.success{color:#00BA96}
 .cnpj-feedback.error{color:#ff8787}
 .field-fade-in{animation:fadeInField .32s ease forwards}
 @keyframes fadeInField{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Custom Dropdown Styling (100% incorporado ao layout oficial Digiana) */
+.cselect{position:relative;width:100%;font-family:var(--font,Sora,sans-serif);user-select:none;margin-top:.1rem}
+.cselect-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:.8rem;border-radius:var(--r2);border:1px solid rgba(244,244,244,.28);background:rgba(244,244,244,.07);color:var(--frost);font:400 .94rem var(--font);text-transform:none!important;letter-spacing:0!important;padding:.8rem 1rem;text-align:left;cursor:pointer;box-sizing:border-box;min-height:48px;transition:border-color .2s ease,outline .2s ease,background .2s ease}
+.cselect.is-open .cselect-trigger,.cselect-trigger:focus-visible{outline:2px solid var(--teal);outline-offset:1px;border-color:transparent;background:rgba(244,244,244,.12)}
+.cselect-arrow{flex:none;color:var(--teal);transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.cselect.is-open .cselect-arrow{transform:rotate(180deg)}
+.cselect-menu{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:99;background:#02254D;border:1px solid rgba(24,163,158,.45);border-radius:var(--r2);box-shadow:0 18px 40px rgba(1,26,56,.85),0 0 1px 1px rgba(0,186,150,.25);max-height:260px;overflow-y:auto;padding:6px;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px) scale(.98);transform-origin:top center;transition:opacity .2s cubic-bezier(.16,1,.3,1),transform .2s cubic-bezier(.16,1,.3,1),visibility .2s;box-sizing:border-box}
+.cselect.is-open .cselect-menu{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0) scale(1)}
+.cselect-menu::-webkit-scrollbar{width:6px}
+.cselect-menu::-webkit-scrollbar-track{background:rgba(244,244,244,.05);border-radius:4px}
+.cselect-menu::-webkit-scrollbar-thumb{background:rgba(24,163,158,.4);border-radius:4px}
+.cselect-menu::-webkit-scrollbar-thumb:hover{background:var(--teal)}
+.cselect-group-label{font:600 10px var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);padding:8px 10px 4px;border-top:1px solid rgba(244,244,244,.1);margin-top:4px}
+.cselect-group-label:first-child{margin-top:0;border-top:0}
+.cselect-option{padding:.52rem .85rem;border-radius:6px;font:400 .84rem var(--font);line-height:1.35;text-transform:none!important;letter-spacing:0!important;color:var(--frost);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:.5rem;transition:background .15s ease,padding-left .15s ease,color .15s ease}
+.cselect-option:hover,.cselect-option.is-focused{background:rgba(24,163,158,.22);color:#fff;padding-left:1.05rem}
+.cselect-option.is-selected{background:rgba(0,186,150,.28);color:#55c2bc;font-weight:600}
+.cselect-option.is-selected::after{content:'✓';color:var(--teal);font-size:.8rem;font-weight:700}
 
 /* rodapé */
 footer.ft{background:var(--panel);color:var(--frost);padding:4.5rem 0 2.5rem;border-top:4px solid var(--teal)}
@@ -821,21 +835,18 @@ footer.ft{background:var(--panel);color:var(--frost);padding:4.5rem 0 2.5rem;bor
 <form id="form" novalidate="">
 <div class="f2">
   <label for="nome">Nome<input autocomplete="name" id="nome" placeholder="Seu nome"/></label>
-  <div id="slot-topo-dir">
-    <label for="empresa" id="wrap-empresa"><span id="lbl-empresa-title">Empresa</span><input autocomplete="organization" id="empresa" placeholder="Razão social ou nome fantasia"/></label>
-    <label for="cnpj" id="wrap-cnpj" style="display:none;">CNPJ da empresa<input id="cnpj" maxlength="18" placeholder="00.000.000/0000-00" autocomplete="off" inputmode="numeric"/></label>
-  </div>
+  <label for="tipo_cliente">Situação da empresa
+    <select id="tipo_cliente">
+      <option value="cnpj" selected>Empresa possui CNPJ</option>
+      <option value="abertura">Abertura de empresa</option>
+    </select>
+  </label>
 </div>
 
-<div class="cnpj-row">
-  <span class="title">A empresa possui CNPJ?</span>
-  <div class="cnpj-choices">
-    <label class="cnpj-choice"><input type="radio" name="tem_cnpj" value="sim" id="cnpj_sim"> Sim</label>
-    <label class="cnpj-choice"><input type="radio" name="tem_cnpj" value="nao" id="cnpj_nao" checked> Não</label>
-  </div>
+<div class="f2 field-fade-in" id="row-cnpj-empresa">
+  <label for="cnpj">CNPJ da empresa<input id="cnpj" maxlength="18" placeholder="00.000.000/0000-00" autocomplete="off" inputmode="numeric"/></label>
+  <label for="empresa" id="wrap-empresa"><span id="lbl-empresa-title">Empresa</span><input autocomplete="organization" id="empresa" placeholder="Razão social ou nome fantasia"/></label>
 </div>
-
-<div id="box-dynamic" style="display:none;"></div>
 <span id="cnpj-feedback" class="cnpj-feedback"></span>
 
 <div class="f2">
@@ -952,7 +963,13 @@ show(0);
 
 var sel=document.getElementById('interesse');
 function pick(txt){
-  for(var i=0;i<sel.options.length;i++){if(sel.options[i].text===txt){sel.selectedIndex=i;return}}
+  for(var i=0;i<sel.options.length;i++){
+    if(sel.options[i].text===txt){
+      sel.selectedIndex=i;
+      sel.dispatchEvent(new Event('change', {bubbles:true}));
+      return;
+    }
+  }
   var m={'Controladoria para operadoras de saúde':'Controladoria estratégica','Governança corporativa':'Controladoria estratégica','Estruturas societárias':'Outro assunto','Assessoria empresarial':'Controladoria estratégica'}[txt];
   if(m)pick(m);
 }
@@ -961,14 +978,157 @@ document.addEventListener('click',function(e){
   var a=e.target.closest('a[data-interest]');if(a)pick(a.dataset.interest);
 });
 
+// Componente de Custom Dropdown (100% incorporado ao layout oficial Digiana)
+function buildCustomSelect(selectEl) {
+  if(!selectEl || selectEl.dataset.customized === 'true') return;
+  selectEl.dataset.customized = 'true';
+  selectEl.style.cssText = 'position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;opacity:0!important;pointer-events:none!important;';
+
+  var wrapper = document.createElement('div');
+  wrapper.className = 'cselect';
+  wrapper.dataset.for = selectEl.id || '';
+
+  var trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'cselect-trigger';
+  trigger.setAttribute('aria-haspopup', 'listbox');
+  trigger.setAttribute('aria-expanded', 'false');
+
+  var triggerText = document.createElement('span');
+  triggerText.className = 'cselect-text';
+  var selectedOpt = selectEl.options[selectEl.selectedIndex];
+  triggerText.textContent = selectedOpt ? selectedOpt.text : '';
+
+  var arrow = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  arrow.setAttribute('class', 'cselect-arrow');
+  arrow.setAttribute('viewBox', '0 0 24 24');
+  arrow.setAttribute('width', '16');
+  arrow.setAttribute('height', '16');
+  arrow.setAttribute('fill', 'none');
+  arrow.setAttribute('stroke', 'currentColor');
+  arrow.setAttribute('stroke-width', '2.2');
+  arrow.setAttribute('stroke-linecap', 'round');
+  arrow.setAttribute('stroke-linejoin', 'round');
+  var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+  poly.setAttribute('points', '6 9 12 15 18 9');
+  arrow.appendChild(poly);
+
+  trigger.appendChild(triggerText);
+  trigger.appendChild(arrow);
+  wrapper.appendChild(trigger);
+
+  var menu = document.createElement('div');
+  menu.className = 'cselect-menu';
+  menu.setAttribute('role', 'listbox');
+
+  function renderOptions() {
+    menu.innerHTML = '';
+    Array.from(selectEl.children).forEach(function(child) {
+      if(child.tagName === 'OPTGROUP') {
+        var grpLabel = document.createElement('div');
+        grpLabel.className = 'cselect-group-label';
+        grpLabel.textContent = child.label;
+        menu.appendChild(grpLabel);
+        Array.from(child.children).forEach(function(opt) {
+          addOptionItem(opt);
+        });
+      } else if(child.tagName === 'OPTION') {
+        addOptionItem(child);
+      }
+    });
+  }
+
+  function addOptionItem(opt) {
+    var optDiv = document.createElement('div');
+    optDiv.className = 'cselect-option' + (opt.selected ? ' is-selected' : '');
+    optDiv.setAttribute('role', 'option');
+    optDiv.setAttribute('aria-selected', opt.selected ? 'true' : 'false');
+    optDiv.dataset.value = opt.value;
+    var span = document.createElement('span');
+    span.textContent = opt.text;
+    optDiv.appendChild(span);
+
+    optDiv.addEventListener('click', function(e) {
+      e.stopPropagation();
+      selectEl.value = opt.value;
+      selectEl.selectedIndex = Array.from(selectEl.options).indexOf(opt);
+      syncUI();
+      wrapper.classList.remove('is-open');
+      trigger.setAttribute('aria-expanded', 'false');
+      selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    menu.appendChild(optDiv);
+  }
+
+  function syncUI() {
+    var cur = selectEl.options[selectEl.selectedIndex];
+    triggerText.textContent = cur ? cur.text : '';
+    menu.querySelectorAll('.cselect-option').forEach(function(el) {
+      var isSel = cur && (el.dataset.value === cur.value || el.textContent.replace('✓', '').trim() === cur.text.trim());
+      el.classList.toggle('is-selected', isSel);
+      el.setAttribute('aria-selected', isSel ? 'true' : 'false');
+    });
+  }
+
+  renderOptions();
+  wrapper.appendChild(menu);
+
+  trigger.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var wasOpen = wrapper.classList.contains('is-open');
+    document.querySelectorAll('.cselect.is-open').forEach(function(cs) {
+      if(cs !== wrapper) {
+        cs.classList.remove('is-open');
+        var tr = cs.querySelector('.cselect-trigger');
+        if(tr) tr.setAttribute('aria-expanded', 'false');
+      }
+    });
+    wrapper.classList.toggle('is-open', !wasOpen);
+    trigger.setAttribute('aria-expanded', !wasOpen ? 'true' : 'false');
+  });
+
+  selectEl.addEventListener('change', syncUI);
+
+  var parentLabel = selectEl.closest('label');
+  if(parentLabel){
+    parentLabel.addEventListener('click', function(e){
+      if(!wrapper.contains(e.target)){
+        e.preventDefault();
+        trigger.click();
+      }
+    });
+  }
+
+  selectEl.parentNode.insertBefore(wrapper, selectEl.nextSibling);
+}
+
+document.querySelectorAll('#form select').forEach(buildCustomSelect);
+
+document.addEventListener('click', function(e) {
+  document.querySelectorAll('.cselect.is-open').forEach(function(cs) {
+    if(!cs.contains(e.target)) {
+      cs.classList.remove('is-open');
+      var tr = cs.querySelector('.cselect-trigger');
+      if(tr) tr.setAttribute('aria-expanded', 'false');
+    }
+  });
+});
+
+document.addEventListener('keydown', function(e) {
+  if(e.key === 'Escape') {
+    document.querySelectorAll('.cselect.is-open').forEach(function(cs) {
+      cs.classList.remove('is-open');
+      var tr = cs.querySelector('.cselect-trigger');
+      if(tr) tr.setAttribute('aria-expanded', 'false');
+    });
+  }
+});
+
 // Dinâmica de CNPJ e Troca Inteligente de Campos
-var cnpjSim = document.getElementById('cnpj_sim');
-var cnpjNao = document.getElementById('cnpj_nao');
-var slotTopoDir = document.getElementById('slot-topo-dir');
-var boxDynamic = document.getElementById('box-dynamic');
+var tipoCliente = document.getElementById('tipo_cliente');
+var rowCnpjEmpresa = document.getElementById('row-cnpj-empresa');
 var wrapEmpresa = document.getElementById('wrap-empresa');
-var wrapCnpj = document.getElementById('wrap-cnpj');
-var lblEmpresaTitle = document.getElementById('lbl-empresa-title');
 var inputCnpj = document.getElementById('cnpj');
 var cnpjFeedback = document.getElementById('cnpj-feedback');
 var inputEmpresa = document.getElementById('empresa');
@@ -976,41 +1136,37 @@ var inputEmail = document.getElementById('email');
 var inputTelefone = document.getElementById('telefone');
 
 function updateFormLayout(){
-  if(cnpjSim && cnpjSim.checked){
-    wrapCnpj.style.display = 'grid';
-    slotTopoDir.appendChild(wrapCnpj);
-    wrapCnpj.classList.remove('field-fade-in');
-    void wrapCnpj.offsetWidth;
-    wrapCnpj.classList.add('field-fade-in');
-
-    boxDynamic.style.display = 'grid';
-    boxDynamic.appendChild(wrapEmpresa);
-    if(lblEmpresaTitle) lblEmpresaTitle.textContent = 'Empresa (Razão Social ou Nome Fantasia)';
-    wrapEmpresa.classList.remove('field-fade-in');
-    void wrapEmpresa.offsetWidth;
-    wrapEmpresa.classList.add('field-fade-in');
-
+  var isCnpj = tipoCliente && tipoCliente.value === 'cnpj';
+  if(isCnpj){
+    if(rowCnpjEmpresa){
+      rowCnpjEmpresa.style.display = 'grid';
+      rowCnpjEmpresa.classList.remove('field-fade-in');
+      void rowCnpjEmpresa.offsetWidth;
+      rowCnpjEmpresa.classList.add('field-fade-in');
+    }
     if(inputCnpj) inputCnpj.focus();
   } else {
-    if(slotTopoDir && wrapEmpresa){
-      slotTopoDir.appendChild(wrapEmpresa);
-      if(lblEmpresaTitle) lblEmpresaTitle.textContent = 'Empresa';
-      wrapEmpresa.classList.remove('field-fade-in');
-      void wrapEmpresa.offsetWidth;
-      wrapEmpresa.classList.add('field-fade-in');
-    }
-
-    if(wrapCnpj) wrapCnpj.style.display = 'none';
-    if(boxDynamic) boxDynamic.style.display = 'none';
+    if(rowCnpjEmpresa) rowCnpjEmpresa.style.display = 'none';
     if(cnpjFeedback){
       cnpjFeedback.textContent = '';
       cnpjFeedback.className = 'cnpj-feedback';
     }
+    if(inputCnpj) inputCnpj.value = '';
+    if(inputEmpresa) inputEmpresa.value = '';
+    var selInteresse = document.getElementById('interesse');
+    if(selInteresse){
+      for(var i=0; i<selInteresse.options.length; i++){
+        if(selInteresse.options[i].text === 'Abertura e legalização'){
+          selInteresse.selectedIndex = i;
+          selInteresse.dispatchEvent(new Event('change', {bubbles:true}));
+          break;
+        }
+      }
+    }
   }
 }
 
-if(cnpjSim) cnpjSim.addEventListener('change', updateFormLayout);
-if(cnpjNao) cnpjNao.addEventListener('change', updateFormLayout);
+if(tipoCliente) tipoCliente.addEventListener('change', updateFormLayout);
 
 function maskCnpj(v){
   v = v.replace(/\D/g, '').slice(0, 14);
@@ -1077,9 +1233,10 @@ document.getElementById('form').addEventListener('submit',async function(e){
   e.preventDefault();
   var ok=document.getElementById('ok');
   var btn=this.querySelector('button[type="submit"]');
+  var isCnpj = tipoCliente ? (tipoCliente.value === 'cnpj') : true;
+  var tipoLabel = isCnpj ? 'Empresa possui CNPJ' : 'Abertura de empresa';
   var n=document.getElementById('nome').value.trim();
   var em=document.getElementById('empresa').value.trim();
-  var temCnpj = cnpjSim && cnpjSim.checked;
   var cVal = inputCnpj ? inputCnpj.value.trim() : '';
   var mail = inputEmail ? inputEmail.value.trim() : '';
   var tel = inputTelefone ? inputTelefone.value.trim() : '';
@@ -1088,8 +1245,9 @@ document.getElementById('form').addEventListener('submit',async function(e){
   var msg=document.getElementById('msg').value.trim();
   var lgpd=document.getElementById('lgpd').checked;
 
-  if(!n||!em){ok.style.color='#ff6b6b';ok.textContent='Informe seu nome e a empresa.';return}
-  if(temCnpj && cVal.replace(/\D/g, '').length !== 14){ok.style.color='#ff6b6b';ok.textContent='Informe um CNPJ válido com 14 dígitos.';return}
+  if(!n){ok.style.color='#ff6b6b';ok.textContent='Informe seu nome.';return}
+  if(isCnpj && !em){ok.style.color='#ff6b6b';ok.textContent='Informe o nome da sua empresa ou consulte o CNPJ.';return}
+  if(isCnpj && cVal.replace(/\D/g, '').length !== 14){ok.style.color='#ff6b6b';ok.textContent='Informe um CNPJ válido com 14 dígitos.';return}
   if(!mail||!mail.includes('@')){ok.style.color='#ff6b6b';ok.textContent='Informe um e-mail válido para retorno.';return}
   if(!tel||tel.replace(/\D/g, '').length < 10){ok.style.color='#ff6b6b';ok.textContent='Informe um telefone ou WhatsApp com DDD para retorno.';return}
   if(!lgpd){ok.style.color='#ff6b6b';ok.textContent='Aceite o tratamento de dados para continuar.';return}
@@ -1104,9 +1262,10 @@ document.getElementById('form').addEventListener('submit',async function(e){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         nome:n,
-        empresa:em,
-        tem_cnpj:temCnpj,
-        cnpj:temCnpj ? cVal : '',
+        tipo_solicitacao: tipoLabel,
+        empresa: isCnpj ? em : (em || 'Abertura de nova empresa'),
+        tem_cnpj: isCnpj,
+        cnpj: isCnpj ? cVal : '',
         email:mail,
         telefone:tel,
         segmento:seg,
@@ -1121,6 +1280,9 @@ document.getElementById('form').addEventListener('submit',async function(e){
       ok.textContent='✓ Solicitação enviada com sucesso! Nossa equipe entrará em contato.';
       document.getElementById('form').reset();
       updateFormLayout();
+      document.querySelectorAll('#form select').forEach(function(s){
+        s.dispatchEvent(new Event('change', {bubbles:true}));
+      });
     }else{
       ok.style.color='#ff6b6b';
       ok.textContent=data.error||'Erro ao enviar mensagem. Tente novamente.';
